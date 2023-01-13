@@ -1,4 +1,5 @@
-import React, { useEffect, useState, SyntheticEvent } from 'react'
+import { format } from 'node:path/win32';
+import React, { useEffect, useState, SyntheticEvent, useRef } from 'react'
 import { json, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from '../components/navbar';
@@ -7,9 +8,9 @@ import './home.css'
 import Login from './login';
 
 const Home = () => {
-    const [ username, setUsername ] = useState("User")
-    const [dataUpload, setDataUpload] = useState('')
-
+    const [ username, setUsername ] = useState("User");
+    const [dataUpload, setDataUpload] = useState('');
+    let encryptMessage:any; let decryptMessage:any;
     let navigate = useNavigate();
     const auth = localAuth();
     useEffect(() => auth.status == 0 ? navigate("/login") : undefined, [])
@@ -19,52 +20,79 @@ const Home = () => {
             setUsername(user.data.user ? user.data.user.username : "User")
         })() 
     }, [])
-
     const handleChange = (e:any) => {
         setDataUpload(e.target.files[0])
     }
-
-    console.log(dataUpload);
-    
-
     const handleSubmit = async (e: SyntheticEvent) => {        
         const formData = new FormData();
-
         formData.append('file', dataUpload)
-
         e.preventDefault();
-        const kirim = await fetch("http://localhost:8080/v1/file/upload", {
+        await fetch("http://localhost:8080/v1/file/upload", {
             method: "POST",
             credentials: "include",
             body: formData
         })
-        .then((res) => 
-            {
-                res.json()
+        .then(async (res) => {
+            const result = await res.json();
+            if(result.message === 'Success'){ 
+                encryptMessage = "Success upload"; decryptMessage = "Success upload"
+                toast.success("Success upload document")
+            } else {
+                toast.error("Fail to upload document")
             }
-        )
-        .then((result) => {
-            console.log('Success:', result);
         })
         .catch(err => {})
-        // if (kirim && kirim.message == "Success") {
-        //     toast.success("Success upload document")
-        // } else {
-        //     toast.error("Fail to upload document")
-        // }
     }
-    // const encrypt = async(e: SyntheticEvent) => {
-    //     const kirim = await fetch("http://localhost:8080/v1/file/encrypt", {
-    //         method: "POST",
-    //         headers: {"Content-Type": "multipart/form-data", "Cookie": document.cookie },
-    //         credentials: "include",
-    //     }).then(res => res.json()).catch(err => err)
-    //     if (kirim && kirim.message == "Success") {
-    //         toast.success("Success upload document")
-    //     } else {
-    //         toast.error("Fail to upload document")
-    //     }
-    // }
+    const handleEncrypt = async (e:SyntheticEvent) => {
+        e.preventDefault();
+        await fetch("http://localhost:8080/v1/file/encrypt", {
+            method: "POST",
+            credentials:"include"
+        })
+        .then(resp => resp.blob())
+        .then(blob => {
+            if(encryptMessage == "Success upload"){
+                let url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = "encrypt.txt";
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                toast.success("Success encrypt document")
+                encryptMessage = ""
+            }else {
+                toast.error("Fail to encrypt document")
+            }
+        })
+        .catch(() => alert("oh no!"));
+    }
+    const handleDecrypt = async (e:SyntheticEvent) => {
+        e.preventDefault();
+        const kirim = await fetch("http://localhost:8080/v1/file/decrypt", {
+            method: "POST",
+            credentials:"include"
+        })
+        .then(resp => resp.blob())
+        .then(blob => {
+            if(decryptMessage == "Success upload"){
+                let url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.style.display = "none";
+                a.href = url;
+                a.download = "decrypt.pdf";
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                toast.success("Success decrypt document")
+                decryptMessage = ""
+            }else {
+                toast.error("Fail to decrypt document")
+            }
+        })
+        .catch(() => alert("oh no!"));
+    }
     if (!auth.status) {
         return <><Navbar login={false} /><p className='d-flex justify-content-center'>You're not logged in!</p></>
     }
@@ -77,11 +105,7 @@ const Home = () => {
              <div className='container w-full'>
                  <div className='row'>
                      <div className='col-sm alert alert-info m-3'>
-                         <form
-                            // encType="multipart/form-data"
-                            // action="http://localhost:8080/v1/file/upload"
-                            // method="post"
-                            // onSubmit={submit}
+                         <form className='upload'
                             >
                             <input type="file" name="file" required onChange={handleChange}/>
                             <input type="submit" value="Upload" onClick={handleSubmit}/>
@@ -89,17 +113,16 @@ const Home = () => {
                      </div>
                      <div className='flex-container col-sm alert alert-warning m-3'>
                         <form 
-                            action="http://localhost:8080/v1/file/encrypt"
-                            method="post"
-                            // onSubmit={encrypt}
+                            //   action="http://localhost:8080/v1/file/encrypt"
+                            //   method="post"
                             >
-                            <input type="submit" name="encrypt" value="Encrypt File"/>
+                            <input type="submit" name="encrypt" value="Encrypt File" onClick={handleEncrypt}/>
                         </form>
                         <form 
-                            action="http://localhost:8080/v1/file/decrypt"
-                            method="post"
+                            // action="http://localhost:8080/v1/file/decrypt"
+                            // method="post"
                             >
-                            <input type="submit" name="decrypt" value="Decrypt File"/>
+                            <input type="submit" name="decrypt" value="Decrypt File" onClick={handleDecrypt}/>
                             </form>
                      </div>
                  </div>
@@ -107,15 +130,6 @@ const Home = () => {
          </div></>
     }
     return <><Navbar login={false} /><p className='d-flex justify-content-center'>loading...</p></>
-
-    // async function upload() {
-    //     const response = await fetch("http://localhost:8080/v1/file/upload", {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json", "Cookie": document.cookie },
-    //         credentials: "include",
-    //     }).then(res => res.json()).catch(err => err)
-    //     return response
-    // }
 
     async function getUserInfo() {
         const response = await fetch("http://localhost:8080/v1/user", {
@@ -133,6 +147,4 @@ const Home = () => {
         return response
     }
 }
-
-
 export default Home

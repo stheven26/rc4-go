@@ -48,18 +48,11 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 		err = errors.New("Can't Open File")
 		return
 	}
-	// newFile, err := os.Create(constants.Key)
-	// if err != nil {``
-	// 	fmt.Println("errorCreate:", err)
-	// 	return
-	// }
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		return
 	}
-	// defer newFile.Close()
 	constants.Data = fileBytes
-	// newFile.Write(fileBytes)
 	data := entity.File{
 		UploadedFile: fmt.Sprint(fileBytes),
 		CreatedAt:    time.Now(),
@@ -69,7 +62,7 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 	if err != nil {
 		return
 	}
-	constants.ID = fmt.Sprint(upload.ID)
+	constants.EncryptID, constants.DecryptID = fmt.Sprint(upload.ID), fmt.Sprint(upload.ID)
 	res = DefaultResponse{
 		Status:  constants.STATUS_SUCCESS,
 		Message: constants.MESSAGE_SUCCESS,

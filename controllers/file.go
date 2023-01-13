@@ -1,10 +1,13 @@
 package controllers
 
 import (
+	"fmt"
 	"hashing-file/constants"
 	"hashing-file/usecase/file"
 	"hashing-file/usecase/user"
 	"net/http"
+	"os"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -67,6 +70,13 @@ func (f *fileControllers) EncryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
+	if constants.EncryptID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  constants.STATUS_FAILED,
+			"Message": constants.MESSAGE_FAILED,
+			"Data":    struct{}{},
+		})
+	}
 	if constants.Key == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
@@ -74,7 +84,7 @@ func (f *fileControllers) EncryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	res, err := f.fileService.EncryptFile(constants.ID, constants.Key, constants.Passphrase, constants.Data)
+	_, err = f.fileService.EncryptFile(constants.EncryptID, constants.Key, constants.Passphrase, constants.Data)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
@@ -82,7 +92,8 @@ func (f *fileControllers) EncryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	return c.Status(http.StatusOK).JSON(res)
+	constants.EncryptID = ""
+	return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.Key), fmt.Sprintf("encrypt-%v", time.Now().UnixMicro()))
 }
 
 func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
@@ -96,6 +107,13 @@ func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
+	if constants.DecryptID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  constants.STATUS_FAILED,
+			"Message": constants.MESSAGE_FAILED,
+			"Data":    struct{}{},
+		})
+	}
 	if constants.Key == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
@@ -103,13 +121,17 @@ func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	res, err := f.fileService.DecryptFile(constants.ID, constants.Key, constants.Passphrase)
+	_, err = f.fileService.DecryptFile(constants.DecryptID, constants.Key, constants.Passphrase)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		fmt.Println("error disini")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
 	}
-	return c.Status(http.StatusOK).JSON(res)
+	constants.DecryptID = ""
+	defer os.Remove(fmt.Sprintf("./%s", constants.Key))
+	defer os.Remove(fmt.Sprintf("./decrypt-%s", constants.Key))
+	return c.Status(http.StatusOK).Download(fmt.Sprintf("./decrypt-%s", constants.Key), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
 }
