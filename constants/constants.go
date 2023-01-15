@@ -1,10 +1,10 @@
 package constants
 
 var (
-	DecryptKey, EncryptKey string
-	Data                   []byte
-	Passphrase             = "sUp3rS3cret!!"
-	EncryptID, DecryptID   string
+	Key                  string
+	Data                 []byte
+	Passphrase           = "sUp3rS3cret!!"
+	EncryptID, DecryptID string
 )
 
 const (

@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"crypto/md5"
-	"encoding/hex"
 
 	"github.com/emersion/go-bcrypt"
 )
@@ -28,5 +27,5 @@ func CheckHashPassword(password, hash string) (bool, error) {
 func RC4Hash(key string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(key))
-	return hex.EncodeToString(hasher.Sum(nil))
+	return string(hasher.Sum(nil))
 }

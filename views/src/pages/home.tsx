@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Navbar from '../components/navbar';
 import { localAuth } from '../helpers/localAuth';
-import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
 import './home.css'
 
 const Home = () => {
@@ -112,16 +111,6 @@ const Home = () => {
     }
     if (auth.status) {
         return <><Navbar login={true} />
-        {/* <Sidebar>
-            <Menu>
-                <SubMenu label="Charts">
-                <MenuItem> Pie charts </MenuItem>
-                <MenuItem> Line charts </MenuItem>
-                </SubMenu>
-                <MenuItem> Documentation </MenuItem>
-                <MenuItem> Calendar </MenuItem>
-            </Menu>
-        </Sidebar>; */}
         <div className="container-sm home">
              <p className='d-flex justify-content-center' id='hello'>
                  HI <b>{username}!</b>

@@ -77,23 +77,24 @@ func (f *fileControllers) EncryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	if constants.EncryptKey == "" {
+	if constants.Key == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
 	}
-	_, err = f.fileService.EncryptFile(constants.EncryptID, constants.EncryptKey, constants.Passphrase, constants.Data)
+	_, err = f.fileService.EncryptFile(constants.EncryptID, constants.Key, constants.Passphrase, constants.Data)
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
+	} else {
+		constants.EncryptID = ""
 	}
-	constants.EncryptID = ""
-	return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.EncryptKey), fmt.Sprintf("encrypt-%v", time.Now().UnixMicro()))
+	return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.Key), fmt.Sprintf("encrypt-%v", time.Now().UnixMicro()))
 }
 
 func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
@@ -113,22 +114,26 @@ func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	if constants.DecryptKey == "" {
+	if constants.Key == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
 	}
-	_, err = f.fileService.DecryptFile(constants.DecryptID, constants.DecryptKey, constants.Passphrase)
+	_, err = f.fileService.DecryptFile(constants.DecryptID, constants.Key, constants.Passphrase)
 	if err != nil {
-		_, err = f.fileService.EncryptFile(constants.EncryptID, constants.EncryptKey, constants.Passphrase, constants.Data)
-		// return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.Key), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"Status":  constants.STATUS_FAILED,
+			"Message": constants.MESSAGE_FAILED,
+			"Data":    struct{}{},
+		})
+	} else {
+		constants.DecryptID = ""
 	}
-	constants.DecryptID = ""
-	defer os.Remove(fmt.Sprintf("./%s", constants.EncryptKey))
-	defer os.Remove(fmt.Sprintf("./decrypt-%s", constants.DecryptKey))
-	return c.Status(http.StatusOK).Download(fmt.Sprintf("./decrypt-%s", constants.DecryptKey), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
+	defer os.Remove(fmt.Sprintf("./%s", constants.Key))
+	defer os.Remove(fmt.Sprintf("./decrypt-%s", constants.Key))
+	return c.Status(http.StatusOK).Download(fmt.Sprintf("./decrypt-%s", constants.Key), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
 }
 
 func (f *fileControllers) GetAllDocument(c *fiber.Ctx) (err error) {

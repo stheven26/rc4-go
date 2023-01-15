@@ -15,6 +15,7 @@ import (
 	"mime/multipart"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -37,8 +38,7 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 	fmt.Printf("Uploaded File: %+v\n", req.Filename)
 	fmt.Printf("File Size: %+v\n", req.Size)
 	fmt.Printf("MIME Header: %+v\n", req.Header)
-	constants.DecryptKey, constants.EncryptKey = req.Filename, req.Filename
-	fmt.Println("key:", constants.DecryptKey, constants.EncryptKey)
+	constants.Key = req.Filename
 	file, err = req.Open()
 	if err != nil {
 		res = DefaultResponse{
@@ -52,6 +52,21 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 	fileBytes, err := ioutil.ReadAll(file)
 	if err != nil {
 		return
+	}
+	extension := strings.Split(constants.Key, ".")
+	if extension[1] == "txt" {
+		constants.Key = fmt.Sprintf("%s.pdf", extension[0])
+		f, errCreate := os.Create(constants.Key)
+		if errCreate != nil {
+			return res, errCreate
+		}
+		f.WriteString(string(fileBytes))
+	} else {
+		fUpload, errCreate := os.Create(constants.Key)
+		if errCreate != nil {
+			return res, errCreate
+		}
+		fUpload.Write(fileBytes)
 	}
 	constants.Data = fileBytes
 	data := entity.File{
@@ -143,7 +158,7 @@ func (s *service) EncryptFile(id, filename, passphrase string, data []byte) (res
 	if err != nil {
 		return
 	}
-	_, err = f.Write(encrypt)
+	_, err = f.WriteString(string(encrypt))
 	if err != nil {
 		return
 	}
