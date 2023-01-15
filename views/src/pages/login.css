@@ -1,0 +1,43 @@
+html,body {
+    margin: 0px;
+    height: 100%;
+}
+.login {
+    margin-top: -22px;
+    height: 92vh;
+}
+
+.rwLogin {
+    padding: 80px;
+}
+
+.contentLogin {
+    width: 320px;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    border: 1px solid #FFF8DC;
+    padding: 40px 18px;
+}
+
+.contentLogin h1 {
+    text-align: center;
+}
+
+.logoLogin {
+    background-image: url("../styles/logo.jpeg");
+    border-radius: 50%;
+    width: 110px;
+    height: 110px;
+    margin: auto;
+    width: 50%;
+}
+
+.h3 {
+    margin: 24px 0px;
+}
+
+.con-login {
+    background-color:black;
+    height: 800px;
+    width: auto;
+}

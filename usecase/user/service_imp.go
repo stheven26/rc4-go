@@ -107,3 +107,16 @@ func (s *service) Logout() (res LogoutResponse, err error) {
 	}
 	return
 }
+
+func (s *service) GetAllUser() (res DefaultResponse, err error) {
+	user, err := s.userRepository.GetAllUser()
+	if err != nil {
+		return
+	}
+	res = DefaultResponse{
+		Status:  constants.STATUS_SUCCESS,
+		Message: constants.MESSAGE_SUCCESS,
+		Data:    user,
+	}
+	return
+}

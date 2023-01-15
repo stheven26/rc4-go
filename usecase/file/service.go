@@ -8,4 +8,5 @@ type FileService interface {
 	EncryptFile(id, filename, passphrase string, data []byte) (res DefaultResponse, err error)
 	DecryptFile(id, filename, passphrase string) (res DefaultResponse, err error)
 	UploadFile(req *multipart.FileHeader) (res DefaultResponse, err error)
+	GetAllDocument() (res DefaultResponse, err error)
 }

@@ -5,6 +5,7 @@ import Navbar from '../components/navbar';
 import { localAuth, setLocalAuth } from '../helpers/localAuth';
 import { toast } from 'react-toastify';
 import "./auth.css"
+import "./login.css"
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -27,37 +28,42 @@ const Login = () => {
         })
         .then(res => res.json())
         .catch(err => {})
+        console.log(kirim.message);
+        
         if (kirim && kirim.message == "Success") {
             toast.success("Login berhasil!")
             setLocalAuth({status: true})
             navigate("/", {replace: true})
         } else {
-            toast.error(kirim ? kirim.message : "Email Incorrect!")
+            toast.error("Login Failed!")
             setError(true)
         }
     }
     if (auth.status) return <><Navbar login={true} /><p className='d-flex justify-content-center'><span className='sr'>Telah Login.</span><Link to="/">Beranda</Link></p></>
     if (!auth.status || error) return <><Navbar login={false} />
-                            <div className="container-sm">
-                                <div className='d-flex justify-content-center'>
-                                    <form className="auth-wrapper" onSubmit={submit}>
-                                        <h1 className="h3 mb-3 fw-normal">Please login</h1>
-                                        <input
-                                            type="email"
-                                            className="form-control"
-                                            placeholder="email@example.com"
-                                            required
-                                            onChange={e => setEmail(e.target.value)}
-                                            />
-                                        <input
-                                            type="password"
-                                            className="form-control"
-                                            placeholder="password"
-                                            required
-                                            onChange={e => setPassword(e.target.value)}
-                                            />
-                                        <button className="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
-                                    </form>
+                            <div className="container-sm login">
+                                <div className='d-flex justify-content-center rwLogin'>
+                                    <div className='contentLogin row'>
+                                        <form className="auth-wrapper" onSubmit={submit}>
+                                            <div className="logoLogin"></div>
+                                            <h1 className="h3 mb-3 fw-normal text">Please login</h1>
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                placeholder="email@example.com"
+                                                required
+                                                onChange={e => setEmail(e.target.value)}
+                                                />
+                                            <input
+                                                type="password"
+                                                className="form-control"
+                                                placeholder="password"
+                                                required
+                                                onChange={e => setPassword(e.target.value)}
+                                                />
+                                            <button className="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div></>
 

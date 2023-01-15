@@ -6,6 +6,37 @@
     margin-right: .3rem;
 }
 
+.col-sm {
+    background-color: #f4f4f4;
+    border: 1px solid #FFF8DC;
+}
+
+.about {
+    font-family: Arial, Helvetica, sans-serif;
+    padding: 8px;
+    margin: 6px;
+    background-color: #f4f4f4;
+    border-radius: 20px;
+    border: 1px solid #FFF8DC;
+}
+
+.about p {
+    text-align: justify;
+}
+
+.about h2 {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.about ol {
+    margin: 16px;
+}
+
+.info {
+    margin-top: 10px;
+}
+
 .flex-container {
     display: flex;
     flex-direction: row;

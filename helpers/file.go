@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	fileTypes = []string{"pdf", "doc"}
+	fileTypes = []string{"pdf", "doc", "txt", "docx", "xlsx"}
 )
 
 func CheckFileType(filename string, filetypes []string) bool {

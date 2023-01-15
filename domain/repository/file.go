@@ -14,6 +14,7 @@ type FileRepository interface {
 	Upload(entity.File) (*entity.File, error)
 	Encrypt(entity.File) (*entity.File, error)
 	Decrypt(entity.File) (*entity.File, error)
+	GetAllDocument() (int64, error)
 }
 
 func InitFileRepository(db *gorm.DB) FileRepository {
@@ -39,4 +40,12 @@ func (f *fileRepository) Decrypt(data entity.File) (*entity.File, error) {
 		return nil, err
 	}
 	return &data, nil
+}
+
+func (f *fileRepository) GetAllDocument() (data int64, err error) {
+	file := []entity.File{}
+	if err = f.DB.Find(&file).Count(&data).Error; err != nil {
+		return
+	}
+	return
 }

@@ -1,0 +1,17 @@
+.navbar-brand p {
+   cursor: pointer;
+}
+
+.navbar-brand a {
+    text-decoration: none;
+    color: white;
+    padding-bottom: 6px;
+}
+
+.navbar-brand a:hover {
+    border-bottom: 2px solid #FFF8DC;
+}
+
+.nav-item a:hover {
+    border-bottom: 2px solid #FFF8DC;
+}

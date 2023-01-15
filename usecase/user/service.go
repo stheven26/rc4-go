@@ -5,4 +5,5 @@ type UserService interface {
 	Login(req LoginRequest) (res LoginResponse, err error)
 	User(cookies string) (res UserResponse, err error)
 	Logout() (res LogoutResponse, err error)
+	GetAllUser() (res DefaultResponse, err error)
 }

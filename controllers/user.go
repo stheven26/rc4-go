@@ -19,6 +19,7 @@ type UserControllersContract interface {
 	Login(c *fiber.Ctx) error
 	User(c *fiber.Ctx) error
 	Logout(c *fiber.Ctx) error
+	GetAllUser(c *fiber.Ctx) error
 }
 
 func InitUserControllers(userService user.UserService) UserControllersContract {
@@ -36,7 +37,7 @@ func (u *UserControllers) Register(c *fiber.Ctx) (err error) {
 	}
 	res, err := u.userService.Register(data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
@@ -56,7 +57,7 @@ func (u *UserControllers) Login(c *fiber.Ctx) (err error) {
 	}
 	users, err := u.userService.Login(data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
@@ -97,6 +98,14 @@ func (u *UserControllers) Logout(c *fiber.Ctx) (err error) {
 	}{
 		Status:  data.Status,
 		Message: fmt.Sprintf("%s Logout", data.Message),
+	}
+	return c.Status(fiber.StatusOK).JSON(res)
+}
+
+func (u *UserControllers) GetAllUser(c *fiber.Ctx) (err error) {
+	res, err := u.userService.GetAllUser()
+	if err != nil {
+		return
 	}
 	return c.Status(fiber.StatusOK).JSON(res)
 }

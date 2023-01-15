@@ -21,6 +21,7 @@ type FileControllersContract interface {
 	UploadDocument(c *fiber.Ctx) error
 	EncryptDocument(c *fiber.Ctx) error
 	DecryptDocument(c *fiber.Ctx) error
+	GetAllDocument(c *fiber.Ctx) error
 }
 
 func InitFileControllers(file file.FileService, user user.UserService) FileControllersContract {
@@ -50,7 +51,7 @@ func (f *fileControllers) UploadDocument(c *fiber.Ctx) (err error) {
 	}
 	res, err := f.fileService.UploadFile(file)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
@@ -60,7 +61,6 @@ func (f *fileControllers) UploadDocument(c *fiber.Ctx) (err error) {
 }
 
 func (f *fileControllers) EncryptDocument(c *fiber.Ctx) (err error) {
-	// id := c.Params("id")
 	cookie := c.Cookies("jwt")
 	_, err = f.userService.User(cookie)
 	if err != nil {
@@ -77,27 +77,26 @@ func (f *fileControllers) EncryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	if constants.Key == "" {
+	if constants.EncryptKey == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
 	}
-	_, err = f.fileService.EncryptFile(constants.EncryptID, constants.Key, constants.Passphrase, constants.Data)
+	_, err = f.fileService.EncryptFile(constants.EncryptID, constants.EncryptKey, constants.Passphrase, constants.Data)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
 	}
 	constants.EncryptID = ""
-	return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.Key), fmt.Sprintf("encrypt-%v", time.Now().UnixMicro()))
+	return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.EncryptKey), fmt.Sprintf("encrypt-%v", time.Now().UnixMicro()))
 }
 
 func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
-	// id := c.Params("id")
 	cookie := c.Cookies("jwt")
 	_, err = f.userService.User(cookie)
 	if err != nil {
@@ -114,24 +113,28 @@ func (f *fileControllers) DecryptDocument(c *fiber.Ctx) (err error) {
 			"Data":    struct{}{},
 		})
 	}
-	if constants.Key == "" {
+	if constants.DecryptKey == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"Status":  constants.STATUS_FAILED,
 			"Message": constants.MESSAGE_FAILED,
 			"Data":    struct{}{},
 		})
 	}
-	_, err = f.fileService.DecryptFile(constants.DecryptID, constants.Key, constants.Passphrase)
+	_, err = f.fileService.DecryptFile(constants.DecryptID, constants.DecryptKey, constants.Passphrase)
 	if err != nil {
-		fmt.Println("error disini")
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"Status":  constants.STATUS_FAILED,
-			"Message": constants.MESSAGE_FAILED,
-			"Data":    struct{}{},
-		})
+		_, err = f.fileService.EncryptFile(constants.EncryptID, constants.EncryptKey, constants.Passphrase, constants.Data)
+		// return c.Status(http.StatusOK).Download(fmt.Sprintf("./%s", constants.Key), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
 	}
 	constants.DecryptID = ""
-	defer os.Remove(fmt.Sprintf("./%s", constants.Key))
-	defer os.Remove(fmt.Sprintf("./decrypt-%s", constants.Key))
-	return c.Status(http.StatusOK).Download(fmt.Sprintf("./decrypt-%s", constants.Key), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
+	defer os.Remove(fmt.Sprintf("./%s", constants.EncryptKey))
+	defer os.Remove(fmt.Sprintf("./decrypt-%s", constants.DecryptKey))
+	return c.Status(http.StatusOK).Download(fmt.Sprintf("./decrypt-%s", constants.DecryptKey), fmt.Sprintf("decrypt-%v", time.Now().UnixMicro()))
+}
+
+func (f *fileControllers) GetAllDocument(c *fiber.Ctx) (err error) {
+	res, err := f.fileService.GetAllDocument()
+	if err != nil {
+		return
+	}
+	return c.Status(fiber.StatusOK).JSON(res)
 }

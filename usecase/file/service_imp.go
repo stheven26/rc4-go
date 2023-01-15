@@ -37,7 +37,8 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 	fmt.Printf("Uploaded File: %+v\n", req.Filename)
 	fmt.Printf("File Size: %+v\n", req.Size)
 	fmt.Printf("MIME Header: %+v\n", req.Header)
-	constants.Key = req.Filename
+	constants.DecryptKey, constants.EncryptKey = req.Filename, req.Filename
+	fmt.Println("key:", constants.DecryptKey, constants.EncryptKey)
 	file, err = req.Open()
 	if err != nil {
 		res = DefaultResponse{
@@ -133,7 +134,6 @@ func (s *service) Decrypt(data []byte, id, passphrase string) (plainText []byte,
 }
 
 func (s *service) EncryptFile(id, filename, passphrase string, data []byte) (res DefaultResponse, err error) {
-	// filename = fmt.Sprintf("encrypt-%s", filename)
 	f, err := os.Create(filename)
 	if err != nil {
 		return
@@ -180,6 +180,19 @@ func (s *service) DecryptFile(id, filename, passphrase string) (res DefaultRespo
 		Status:  constants.STATUS_SUCCESS,
 		Message: constants.MESSAGE_SUCCESS,
 		Data:    struct{}{},
+	}
+	return
+}
+
+func (s *service) GetAllDocument() (res DefaultResponse, err error) {
+	doc, err := s.fileRepository.GetAllDocument()
+	if err != nil {
+		return
+	}
+	res = DefaultResponse{
+		Status:  constants.STATUS_SUCCESS,
+		Message: constants.MESSAGE_SUCCESS,
+		Data:    doc,
 	}
 	return
 }
