@@ -5,6 +5,21 @@ import './navbar.css'
 const Navbar = (props: { login: boolean }) => {
     let notLogedIn = props.login 
         ?   <ul className="navbar-nav me-auto mb-2 mb-md-0">
+             <li className="nav-item">
+                    <Link to="/" className="nav-link active">
+                        Home
+                    </Link>
+                </li>
+                <li className="nav-item">
+                    <Link to="/about" className="nav-link active">
+                        About
+                    </Link>
+                </li>
+                <li className="nav-item">
+                    <Link to="/help" className="nav-link active">
+                        Help
+                    </Link>
+                </li>
                 <li className="nav-item">
                     <Link to="/logout" className="nav-link active">
                         Logout

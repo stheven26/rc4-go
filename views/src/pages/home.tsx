@@ -143,7 +143,7 @@ const Home = () => {
                             </form>
                      </div>
                  </div>
-                 <div className='row about'>
+                 <div className='row about-home'>
                     <h2>Kopi Tydatara</h2> <br /><br />
                     <p>
                     Kopi Tydatara adalah UMKM dibidang kuliner terutama pada minuman yang terbuat dari kopi tydatara ini terbentuk pada tahun 2015 sampai saat ini, Tyadatara kopi juga dapat membantu masyarakat untuk mengenal lebih banyak tentang kopi, dari cara penyajian maupun jenis jenis biji kopi dari manca negara. <br />

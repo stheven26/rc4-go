@@ -9,6 +9,8 @@ import Register from './pages/register';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.min.css';
+import Help from './pages/help';
+import About from './pages/about';
 
 function App() {
 
@@ -24,6 +26,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path='/help' element={<Help/>} />
+            <Route path='/about' element={<About/>} />
           </Routes>
         </main>
       </BrowserRouter>

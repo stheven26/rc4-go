@@ -20,16 +20,16 @@
     border: 1px solid #FFF8DC;
 }
 
-.about p {
+.about-home p {
     text-align: justify;
 }
 
-.about h2 {
+.about-home h2 {
     margin-top: 10px;
     text-align: center;
 }
 
-.about ol {
+.about-home ol {
     margin: 16px;
 }
 
