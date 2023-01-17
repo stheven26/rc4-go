@@ -27,7 +27,7 @@ func ValidateFileHeader(fileHeader *multipart.FileHeader) (err error) {
 	fileType := filenameSplit[len(filenameSplit)-1]
 	for _, allowedType := range fileTypes {
 		if fileType == allowedType {
-			if (fileType == "pdf" || fileType == "doc") && fileHeader.Size > 10<<20 { // 10mb for pdf & doc
+			if fileHeader.Size > 10<<20 {
 				err = errors.New(fmt.Sprintf("%s is too large", fileHeader.Filename))
 			}
 			return
