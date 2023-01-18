@@ -38,6 +38,10 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 	fmt.Printf("Uploaded File: %+v\n", req.Filename)
 	fmt.Printf("File Size: %+v\n", req.Size)
 	fmt.Printf("MIME Header: %+v\n", req.Header)
+	filenameSplit := strings.Split(req.Filename, ".")
+	if filenameSplit[len(filenameSplit)-1] != "txt" {
+		constants.Extensions = filenameSplit[len(filenameSplit)-1]
+	}
 	constants.Key = req.Filename
 	file, err = req.Open()
 	if err != nil {
@@ -55,7 +59,7 @@ func (s *service) UploadFile(req *multipart.FileHeader) (res DefaultResponse, er
 	}
 	extension := strings.Split(constants.Key, ".")
 	if extension[1] == "txt" {
-		constants.Key = fmt.Sprintf("%s.pdf", extension[0])
+		constants.Key = fmt.Sprintf("%s.%s", extension[0], constants.Extensions)
 		f, errCreate := os.Create(constants.Key)
 		if errCreate != nil {
 			return res, errCreate

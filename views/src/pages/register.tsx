@@ -27,11 +27,11 @@ const Register = () => {
             toast.error("Email has been used for another account!")
         } else {
             toast.success(regist.message)
-            navigate("/login")
+            navigate("/")
         }
     }
 
-    if (auth.status) return <><Navbar login={true} /><p className='d-flex justify-content-center'><span className='sr'>Telah Login.</span><Link to="/">Beranda</Link></p></>
+    if (auth.status) return <><Navbar login={true} /><p className='d-flex justify-content-center'><span className='sr'>Telah Login.</span><Link to="/home">Beranda</Link></p></>
     return (
         <><Navbar login={false} />
         <div className='container-sm register'>
@@ -43,7 +43,7 @@ const Register = () => {
                         <h1 className="h3 mb-3 fw-normal">Sign Up</h1>
                         <input
                             className="form-control"
-                            placeholder="name"
+                            placeholder="username"
                             required
                             onChange={e => setUsername(e.target.value)}
                         />

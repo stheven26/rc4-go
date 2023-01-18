@@ -6,7 +6,7 @@ const Navbar = (props: { login: boolean }) => {
     let notLogedIn = props.login 
         ?   <ul className="navbar-nav me-auto mb-2 mb-md-0">
              <li className="nav-item">
-                    <Link to="/" className="nav-link active">
+                    <Link to="/home" className="nav-link active">
                         Home
                     </Link>
                 </li>
@@ -28,7 +28,7 @@ const Navbar = (props: { login: boolean }) => {
             </ul>
         :   <ul className="navbar-nav me-auto mb-2 mb-md-0">
                 <li className="nav-item">
-                    <Link to="/login" className="nav-link active">
+                    <Link to="/" className="nav-link active">
                         Login
                     </Link>
                 </li>

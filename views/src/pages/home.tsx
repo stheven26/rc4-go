@@ -13,7 +13,7 @@ const Home = () => {
     let encryptMessage:any; let decryptMessage:any;
     let navigate = useNavigate();
     const auth = localAuth();
-    useEffect(() => auth.status == 0 ? navigate("/login") : undefined, [])
+    useEffect(() => auth.status == 0 ? navigate("/") : undefined, [])
     useEffect(() => {
         (async () => {
             let user = await getUserInfo()

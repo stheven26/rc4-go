@@ -32,13 +32,13 @@ const Login = () => {
         if (kirim && kirim.message == "Success") {
             toast.success("Login berhasil!")
             setLocalAuth({status: true})
-            navigate("/", {replace: true})
+            navigate("/home", {replace: true})
         } else {
             toast.error("Login Failed!")
             setError(true)
         }
     }
-    if (auth.status) return <><Navbar login={true} /><p className='d-flex justify-content-center'><span className='sr'>Telah Login.</span><Link to="/">Beranda</Link></p></>
+    if (auth.status) return <><Navbar login={true} /><p className='d-flex justify-content-center'><span className='sr'>Telah Login.</span><Link to="/home">Beranda</Link></p></>
     if (!auth.status || error) return <><Navbar login={false} />
                             <div className="container-sm login">
                                 <div className='d-flex justify-content-center rwLogin'>

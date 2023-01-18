@@ -22,7 +22,7 @@ const Logout = () => {
                 const content = await response
                 if (content.message == "Success Logout") {
                     setLocalAuth({status: false})
-                    navigate('/login', { replace: false })
+                    navigate('/', { replace: false })
                 }else {
                     toast.error("Failed Logout")
                 }

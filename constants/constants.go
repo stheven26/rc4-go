@@ -5,6 +5,7 @@ var (
 	Data                 []byte
 	Passphrase           = "sUp3rS3cret!!"
 	EncryptID, DecryptID string
+	Extensions           string
 )
 
 const (

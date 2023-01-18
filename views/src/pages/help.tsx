@@ -15,7 +15,7 @@ const Help = () => {
                     <h2>Cara Pengunaan: </h2> <br /><br />
                     <ol>
                         <li>Klik choosen file, lalu pilih file yang ingin di upload.</li>
-                        <li>Format file yang dapat di upload adalah pdf, doc, txt dan xlsx dengan besar kapasitas 10 mb.</li>
+                        <li>Format file yang dapat di upload adalah pdf, doc dan txt dengan besar kapasitas 10 mb.</li>
                         <li>Setelah memilih file, klik upload.</li>
                         <li>Setelah berhasil upload file, maka dapat mengakses layanan enskripsi dan deskripsi.</li>
                         <li>Klik Encrypt File untuk mengenkripsi file yang telah di upload.</li>
