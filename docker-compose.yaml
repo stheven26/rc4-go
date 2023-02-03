@@ -1,0 +1,8 @@
+version: '3'
+services:
+  todo-backend:
+    build: .
+    ports:
+      - 3041:8080
+    env_file:
+      - .env
